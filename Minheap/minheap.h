@@ -15,6 +15,7 @@
  * =====================================================================================
  */
 
+/* TODO: Change this structure to make it contain what you need */
 typedef struct min_heap_key {
 	int   val;
 	void *data;

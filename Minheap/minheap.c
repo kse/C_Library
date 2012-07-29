@@ -35,6 +35,7 @@ min_heap_extract_min(min_heap_t *A, min_heap_key_t **key) {
 		A->left = min_heap_extract_min(A->left, &t_key);
 		A->key = t_key;
 	} else if(A->left->key->val > A->right->key->val) {
+		/* TODO: Change comparison above to fit your usage */
 		A->right = min_heap_extract_min(A->right, &t_key);
 		A->key = t_key;
 	} else {
@@ -99,6 +100,7 @@ min_heap_increase_key(min_heap_t *A) {
 	if(A->parent == NULL)
 		return A;
 
+	/* TODO: Change comparison below to fit your usage */
 	if(A->parent->key->val < A->key->val)
 		return min_heap_increase_key(A->parent);
 
