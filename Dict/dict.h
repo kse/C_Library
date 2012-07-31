@@ -31,7 +31,7 @@ typedef struct DICT {
 	 * Points to parent, if this is the element,
 	 * it's null.
 	 */
-	struct DICT    *parent;
+	//struct DICT    *parent;
 
 	int             n;
 	dict_element_t *i;

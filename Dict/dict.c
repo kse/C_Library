@@ -113,7 +113,7 @@ dict_insert(dict_t *D, char *word) {
 			old->n++;
 			old->i[old->n - 1].c = c;
 			old->i[old->n - 1].p = d;
-			d->parent = old;
+			//d->parent = old;
 			d->n = 0;
 			d->i = NULL;
 
