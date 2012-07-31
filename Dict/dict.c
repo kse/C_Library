@@ -20,6 +20,7 @@
 
 #include "dict.h"
 
+/* These should count the amount of allocated data structures. */
 int c_dict = 0;
 int c_dict_e = 0;
 
