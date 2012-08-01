@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <ctype.h>
+
 #include "dict.h"
 
 /* These should count the amount of allocated data structures. */
@@ -58,7 +60,7 @@ dict_lookup(dict_t *D, char *word) {
 		int match = 0;
 
 		for(j = 0; j < old->n; j++) {
-			if(old->i[j].c == c) {
+			if(old->i[j].c == tolower(c)) {
 				match = 1;
 				break;
 			}
@@ -94,7 +96,7 @@ dict_insert(dict_t *D, char *word) {
 		int match = 0;
 
 		for(j = 0; j < old->n; j++) {
-			if(old->i[j].c == c) {
+			if(old->i[j].c == tolower(c)) {
 				match = 1;
 				break;
 			}
@@ -112,7 +114,7 @@ dict_insert(dict_t *D, char *word) {
 			old->i = realloc(old->i, sizeof(dict_element_t) * (old->n + 1));
 			c_dict_e++;
 			old->n++;
-			old->i[old->n - 1].c = c;
+			old->i[old->n - 1].c = tolower(c);
 			old->i[old->n - 1].p = d;
 			//d->parent = old;
 			d->n = 0;
