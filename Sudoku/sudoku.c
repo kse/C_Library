@@ -69,8 +69,6 @@ sd_solve_by_unique(sd_t *sd) {
 			}
 		}
 
-		//printf("Value 5 is: %d\n", val[5]);
-
 		for(k = 1; k < 10; k++) {
 			if(val[k] == 1) {
 				for(j = p; j < p + 3; j++) {
@@ -408,8 +406,10 @@ sd_parse(char *sudoku) {
 		return NULL;
 	}
 
+	/* Mark what values are possible in what fields */
 	sd_enforce_constraints(sd);
 
+	/* First, try solving by simple constraint checking */
 	do {
 		enum SD_STATUS st = sd_solve_by_constraints(sd);
 
@@ -422,6 +422,7 @@ sd_parse(char *sudoku) {
 
 	} while(sd_solve_by_unique(sd));
 
+	/* If constraint checking fails, the try making random guesses */
 	sd = sd_solve_by_guessing(sd);
 
 	return sd;
