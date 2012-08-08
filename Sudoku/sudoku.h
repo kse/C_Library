@@ -47,7 +47,7 @@ enum SD_STATUS {
 
 typedef struct SUDOKU_FIELD {
 	int val;
-	char c[9];
+	char c[10];
 } sd_field_t;
 
 typedef struct SUDOKU {
