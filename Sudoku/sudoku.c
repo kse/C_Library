@@ -485,7 +485,7 @@ sd_solve(FILE *input) {
 			puzzles, d_max, i/1000, i%1000);
 
 	printf("That means i used a maximum of %lu kB of memory\n", 
-			(d_max*sizeof(sd_t))/1024);
+			((d_max + 1)*sizeof(sd_t))/1024);
 
 	free(sd);
 }
