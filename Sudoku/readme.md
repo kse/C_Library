@@ -31,6 +31,7 @@ the characters of a sudoku. It will skip unusable characters, but will use
 If you want to use it from the command line, you can compile it with 
 `make solver`, which will produce a file called *solve*.
 You can then feed solve input a few different way:
+
     $ ./solve < <filename>
 	$ cat <filename> | ./solve
 	$ ./solve
@@ -47,3 +48,9 @@ The names of the functions are quite silly, but i had a slight fever while
 coming up with them, so i blame that. 
 
 No validation is done on input sudoku puzzles, just so you know.
+
+Files
+-----
+
+* **top95**: Some sudoku files from http://magictour.free.fr/top95
+* **hardest**: Some "hard" puzzles (but not really apparently).
