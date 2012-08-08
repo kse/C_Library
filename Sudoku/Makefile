@@ -13,6 +13,7 @@ so: $(OBJECTS)
 clean:
 	-rm $(OBJECTS)
 	-rm *.so
+	-rm solve
 
 solver: $(OBJECTS)
 	$(CC) $(CFLAGS) -o solve solve.c $(OBJECTS)
