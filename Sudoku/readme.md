@@ -1,6 +1,15 @@
 Sudoku solver implementation
 ============================
 
+Credits
+-------
+
+Credits to Peter Norvig http://norvig.com/sudoku.html. I originally
+read part of his article to get some ideas for solving.
+
+My code is C (and not pretty C), that uses a lot of complicated for loops.
+But it does what it's supposed to, and fairly fast.
+
 Solving techniques
 ------------------
 
