@@ -315,6 +315,12 @@ sd_solve_by_guessing(sd_t *sd) {
 	int min = 20, mini = 0;
 	int i, j, k;
 	sd_t *nsd = malloc(sizeof(sd_t));
+
+	/* Sanity check to not bother solving, if already solved */
+	if(sd->solved == SD_SOLVED) {
+		return sd;
+	}
+
 	sd->solved = SD_NOT_SOLVED;
 	memset(nsd, 0, sizeof(sd_t));
 
@@ -436,12 +442,16 @@ sd_solve(FILE *input) {
 		} while(sd_solve_by_unique(sd));
 
 		/* If constraint checking fails, the try making random guesses */
-		sd = sd_solve_by_guessing(sd);
+		if(sd->solved != SD_SOLVED) {
+			sd = sd_solve_by_guessing(sd);
+		}
 
 		diff = clock() - start;
 
 		puzzles++;
 		i = diff * 1000 / CLOCKS_PER_SEC;
+
+		printf("Solved is: %d\n", sd->solved);
 
 		if(sd->solved == SD_SOLVED) {
 			printf("Successfully solved puzzle %d in %d.%ds:\n", 
