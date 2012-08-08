@@ -1,5 +1,5 @@
 CC		= gcc
-CFLAGS	= -pipe -Wall -Wextra -fomit-frame-pointer -pedantic -std=c99 -O3 -fPIC
+CFLAGS	= -pipe -Wall -Wextra -fomit-frame-pointer -pedantic -std=c99 -O3 -fPIC -g
 OBJECTS = sudoku.o
 
 all: $(OBJECTS)
@@ -13,3 +13,6 @@ so: $(OBJECTS)
 clean:
 	-rm $(OBJECTS)
 	-rm *.so
+
+solver: $(OBJECTS)
+	$(CC) $(CFLAGS) -o solve solve.c $(OBJECTS)

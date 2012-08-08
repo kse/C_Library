@@ -60,3 +60,6 @@ sd_parse(char *sudoku);
 
 void
 sd_print(sd_t *sd);
+
+void                                                                            
+sd_solve(FILE *input);

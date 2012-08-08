@@ -42,6 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "sudoku.h"
 
@@ -200,10 +201,10 @@ sd_solve_by_unique(sd_t *sd) {
 		}
 	}
 
-	sd->solved = 1;
+	sd->solved = SD_SOLVED;
 	for(i = 0; i < 81; i++) {
 		if(sd->field[i].val == 0) {
-			sd->solved = 0;
+			sd->solved = SD_NOT_SOLVED;
 		}
 	}
 
@@ -262,7 +263,6 @@ sd_solve_by_constraints(sd_t *sd) {
 					val = j;
 					nval++;
 				}
-
 			}
 
 			if(nval == 1) {
@@ -296,14 +296,14 @@ sd_solve_by_constraints(sd_t *sd) {
 		}
 	}
 
-	sd->solved = 1;
+	sd->solved = SD_SOLVED;
 	for(i = 0; i < 81; i++) {
 		if(sd->field[i].val == 0) {
-			sd->solved = 0;
+			sd->solved = SD_NOT_SOLVED;
 		}
 	}
 
-	if(sd->solved) {
+	if(sd->solved == SD_SOLVED) {
 		return SD_SOLVED;
 	} else {
 		return SD_NOT_SOLVED;
@@ -316,6 +316,7 @@ sd_solve_by_guessing(sd_t *sd) {
 	int i, j, k;
 	sd_t *nsd = malloc(sizeof(sd_t));
 	sd->solved = SD_NOT_SOLVED;
+	memset(nsd, 0, sizeof(sd_t));
 
 	for(i = 0; i < 81; i++) {
 		k = 0;		
@@ -346,6 +347,11 @@ sd_solve_by_guessing(sd_t *sd) {
 
 		while(nsd->solved != SD_UNSOLVABLE) {
 			do {
+				if(nsd->solved == SD_SOLVED) {
+					free(sd);
+					return nsd;
+				}
+
 				enum SD_STATUS st = sd_solve_by_constraints(nsd);
 
 				if(st == SD_SOLVED) {
@@ -368,7 +374,87 @@ sd_solve_by_guessing(sd_t *sd) {
 		return sd;
 	}
 
+	free(sd);
 	return nsd;
+}
+
+void
+sd_solve(FILE *input) {
+	sd_t *sd = malloc(sizeof(sd_t));
+	int i = 0;
+	int puzzles = 0;
+	char c;
+	clock_t start, diff;
+
+	while(!feof(input)) {
+		memset(sd, 0, sizeof(sd_t));
+		i = 0;
+		while(i < 81) {
+			if(feof(input))
+				break;
+
+			if(fread(&c, 1, 1, input) == 0) {
+				/* We've exhausted out input */
+				break;
+			}
+
+			if(!isdigit(c) && c != '.') {
+				continue;
+			}
+
+			if(c == '.') {
+				sd->field[i].val = 0;
+			} else {
+				sd->field[i].val = c - '0';
+			}
+
+			i++;
+		}
+
+		if(i != 81) {
+			/* We've not found enough to allocate sudoku */
+			break;
+		}
+
+		start = clock();
+
+		/* Mark what values are possible in what fields */
+		sd_enforce_constraints(sd);
+
+		/* First, try solving by simple constraint checking */
+		do {
+			enum SD_STATUS st = sd_solve_by_constraints(sd);
+
+			if(st == SD_SOLVED) {
+				sd->solved = SD_SOLVED;
+				break;
+			} else if(st == SD_UNSOLVABLE) {
+				sd->solved = SD_UNSOLVABLE;
+				break;
+			}
+
+		} while(sd_solve_by_unique(sd));
+
+		/* If constraint checking fails, the try making random guesses */
+		sd = sd_solve_by_guessing(sd);
+
+		diff = clock() - start;
+
+		puzzles++;
+		i = diff * 1000 / CLOCKS_PER_SEC;
+
+		if(sd->solved == SD_SOLVED) {
+			printf("Successfully solved puzzle %d in %d.%ds:\n", 
+					puzzles, i/1000, i%1000);
+		} else if(sd->solved == SD_UNSOLVABLE) {
+			printf("Failed unsolvable puzzle %d:\n", puzzles);
+		} else {
+			printf("Failed solving puzzle %d:\n", puzzles);
+		}
+		sd_print(sd);
+	}
+
+	free(sd);
 }
 
 sd_t *
