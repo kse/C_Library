@@ -46,6 +46,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "sudoku.h"
 
+int d = 0;
+int d_max = 0;
+
 int
 sd_solve_by_unique(sd_t *sd) {
 	int i, j, p, k, z;
@@ -342,6 +345,11 @@ sd_solve_by_guessing(sd_t *sd) {
 		if(sd->field[mini].c[i] == 0)
 			continue;
 
+		d++;
+		if(d > d_max) {
+			d_max = d;
+		}
+
 		memcpy(nsd, sd, sizeof(sd_t));
 
 
@@ -363,6 +371,7 @@ sd_solve_by_guessing(sd_t *sd) {
 				if(st == SD_SOLVED) {
 					free(sd);
 					nsd->solved = SD_SOLVED;
+					d--;
 					return nsd;
 				} else if(st == SD_UNSOLVABLE) {
 					nsd->solved = SD_UNSOLVABLE;
@@ -370,8 +379,13 @@ sd_solve_by_guessing(sd_t *sd) {
 				}
 			} while(sd_solve_by_unique(nsd));
 
-			nsd = sd_solve_by_guessing(nsd);
+			if(nsd->solved != SD_UNSOLVABLE) {
+				nsd = sd_solve_by_guessing(nsd);
+			}
+
 		}
+
+		d--;
 	}
 
 	if(!nsd->solved == SD_SOLVED) {
@@ -390,7 +404,9 @@ sd_solve(FILE *input) {
 	int i = 0;
 	int puzzles = 0;
 	char c;
-	clock_t start, diff;
+	clock_t start, diff, begin_time;
+
+	begin_time = clock();
 
 	while(!feof(input)) {
 		memset(sd, 0, sizeof(sd_t));
@@ -449,9 +465,7 @@ sd_solve(FILE *input) {
 		diff = clock() - start;
 
 		puzzles++;
-		i = diff * 1000 / CLOCKS_PER_SEC;
-
-		printf("Solved is: %d\n", sd->solved);
+		i = (diff * 1000) / CLOCKS_PER_SEC;
 
 		if(sd->solved == SD_SOLVED) {
 			printf("Successfully solved puzzle %d in %d.%ds:\n", 
@@ -463,6 +477,17 @@ sd_solve(FILE *input) {
 		}
 		sd_print(sd);
 	}
+
+	diff = clock() - begin_time;
+	i = (diff * 1000) / CLOCKS_PER_SEC;
+
+	printf("\nSolved %d puzzles with a recursion depth of %d\n",
+			puzzles, d_max);
+
+	printf("in %d.%ds\n", i/1000, i%1000);
+
+	printf("That means i used a maximum of %lu kB of memory\n", 
+			(d_max*sizeof(sd_t))/1024);
 
 	free(sd);
 }
