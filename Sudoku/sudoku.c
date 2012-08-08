@@ -481,10 +481,8 @@ sd_solve(FILE *input) {
 	diff = clock() - begin_time;
 	i = (diff * 1000) / CLOCKS_PER_SEC;
 
-	printf("\nSolved %d puzzles with a recursion depth of %d\n",
-			puzzles, d_max);
-
-	printf("in %d.%ds\n", i/1000, i%1000);
+	printf("\nSolved %d puzzles with a recursion depth of %d in %d.%ds\n",
+			puzzles, d_max, i/1000, i%1000);
 
 	printf("That means i used a maximum of %lu kB of memory\n", 
 			(d_max*sizeof(sd_t))/1024);
