@@ -11,9 +11,9 @@ so: $(OBJECTS)
 	$(CC) $(CFLAGS) -shared $(OBJECTS) -o libsudoku.so
 
 clean:
-	-rm $(OBJECTS)
-	-rm *.so
-	-rm solve
+	-rm -f $(OBJECTS)
+	-rm -f *.so
+	-rm -f solve
 
 solver: $(OBJECTS)
 	$(CC) $(CFLAGS) -o solve solve.c $(OBJECTS)
